@@ -1,8 +1,14 @@
 # Secure-Restful-Communication
 
 
-Task 3:
-For the following files upgraded_client, upgraded_server, and the keygen file. The purpose of these files is to establish an initial connection through the exchange of a public key which allows for the exchange of a private session key. After the exchange takes place aesgcm is used to provide authenticated encryption to ensure tampering of message is difficult.
+For the functionality of the project we have 3 main dependencies.
+Cryptography - Security dependent features library
+Requests - http requests
+Flask - server handling
+
+To begin running this program the best practice is to make a virtual environment.
+Run the commands below to setup the base environment -
+python3 -m venv .venv
 
 For the upgraded client and server file simply run the keygen file using the following command
 python3 keygen.py

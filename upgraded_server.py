@@ -4,6 +4,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import os
 import secrets
+import json
 
 def encrypt_data(data, key):
     aesgcm = AESGCM(key)
@@ -19,6 +20,9 @@ with open('secret.key', 'rb') as f:
 
 with open('public.key', 'rb') as f:
     server_public_key = serialization.load_pem_public_key(f.read())
+
+with open('pk.cert', 'r') as f:
+    cert = json.load(f)
 
 session_key = None
 
@@ -38,7 +42,11 @@ def get_public_key():
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
-    return public_pem
+    response = {
+        "public_key": public_pem.hex(),
+        "cert": cert
+    }
+    return json.dumps(response)
 
 @app.route('/key-exchange', methods=['POST'])
 def receive_data():
@@ -66,7 +74,4 @@ def display_weather():
 
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1' ,port=5000, debug=True) 
-
-
-
+    app.run(host='127.0.0.1' ,port=5000, debug=True)

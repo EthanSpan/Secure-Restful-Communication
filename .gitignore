@@ -1,0 +1,6 @@
+secret.key
+secret_ca.key   
+public.key
+public_ca.key
+pk.cert
+.venv

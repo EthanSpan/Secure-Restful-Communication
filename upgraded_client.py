@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import os
+import json
 
 def decrypt_data(encrypted_data, key):
     nonce = encrypted_data[:12]
@@ -14,6 +15,9 @@ def decrypt_data(encrypted_data, key):
     plaintext = aesgcm.decrypt(nonce, ciphertext, None)
     return plaintext.decode('utf-8')
 
+with open('public_ca.key', 'rb') as f:
+    ca_public_key = serialization.load_pem_public_key(f.read())
+
 public_key_url = 'http://127.0.0.1:5000/public-key'
 exchange_url = 'http://127.0.0.1:5000/key-exchange'
 url = 'http://127.0.0.1:5000/weather'
@@ -21,8 +25,25 @@ url = 'http://127.0.0.1:5000/weather'
 session_key = os.urandom(32) #generate a random session key
 
 response = requests.get(public_key_url) #get the server's public key
-server_public_key = serialization.load_pem_public_key(response.content)
+data = json.loads(response.content)
+cert = data['cert']
+server_public_key = serialization.load_pem_public_key(bytes.fromhex(data['public_key']))
 print("Got server public key")
+
+try:
+    ca_public_key.verify(
+        bytes.fromhex(cert['signature']),
+        cert['message'].encode('utf-8'),
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    print("Certificate verified successfully")
+except Exception as e:
+    print(f"Certificate verification failed: {e}")
+    exit(1)
 
 encrypted_session_key = server_public_key.encrypt( #encrypt session key with server's public key
     session_key,
