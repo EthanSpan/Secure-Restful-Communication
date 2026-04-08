@@ -1,11 +1,11 @@
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 
-
+# rsa public and private key generation based on the cryptography library
 private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 public_key = private_key.public_key()
 
-
+# create info for private then public key below in PEM format
 private_pem = private_key.private_bytes(
     encoding=serialization.Encoding.PEM,
     format=serialization.PrivateFormat.PKCS8,
@@ -16,7 +16,7 @@ public_pem = public_key.public_bytes(
     encoding=serialization.Encoding.PEM,
     format=serialization.PublicFormat.SubjectPublicKeyInfo
 )
-
+# inserts to appropriate files
 with open('public.key', 'wb') as f:
     f.write(public_pem)
 with open('secret.key', 'wb') as f:
