@@ -4,3 +4,4 @@ public.key
 public_ca.key
 pk.cert
 .venv
+.env

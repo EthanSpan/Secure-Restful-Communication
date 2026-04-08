@@ -11,6 +11,7 @@ def encrypt_data(data, key):
     nonce = os.urandom(12)  
     ciphertext = aesgcm.encrypt(nonce, data.encode('utf-8'), None)  
     return nonce + ciphertext
+
 # grabs the secret key, public key, and certificate for the server
 with open('secret.key', 'rb') as f:
     server_private_key = serialization.load_pem_private_key(
