@@ -1,5 +1,7 @@
 from flask import Flask
 
+# this file initiates a flask server that just listens for get requests and serves the weather data when requested
+# just an example server for basic communication before demonstrating the secure communication in the upgraded filess
 app = Flask(__name__)
 
 
